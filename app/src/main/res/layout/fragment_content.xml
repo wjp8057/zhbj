@@ -4,9 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView3"
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="fragment主页" />
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:background="@drawable/bottom_tab_bg"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <RadioButton
+            android:id="@+id/tab_home"
+            style="@style/Bottom_tabs_style"
+            android:drawableTop="@drawable/bottom_tabs_home_selector"
+            android:checked="true"
+            android:text="@string/tabs_home" />
+        <RadioButton
+            android:id="@+id/tab_news"
+            style="@style/Bottom_tabs_style"
+            android:drawableTop="@drawable/bottom_tabs_newscenter_selector"
+            android:text="@string/tabs_news" />
+        <RadioButton
+            android:id="@+id/tab_service"
+            style="@style/Bottom_tabs_style"
+            android:drawableTop="@drawable/bottom_tabs_smartservice_selector"
+            android:text="@string/tabs_service" />
+        <RadioButton
+            android:id="@+id/tab_goveaff"
+            style="@style/Bottom_tabs_style"
+            android:drawableTop="@drawable/bottom_tabs_govaffairs_selector"
+            android:text="@string/tabs_goveaff" />
+        <RadioButton
+            android:id="@+id/tab_settings"
+            style="@style/Bottom_tabs_style"
+            android:drawableTop="@drawable/bottom_tabs_settings_selector"
+            android:text="@string/tabs_settings" />
+    </RadioGroup>
 </LinearLayout>
