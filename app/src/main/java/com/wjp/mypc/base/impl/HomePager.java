@@ -26,7 +26,7 @@ public class HomePager extends BasePager {
         view.setGravity(Gravity.CENTER);
         flContent.addView(view);
         //更改标题
-        tvTitle.setText("首页");
+        tvTitle.setText("智慧南昌");
         //隐藏menu图标
         imgBtnMenu.setVisibility(View.INVISIBLE);
     }

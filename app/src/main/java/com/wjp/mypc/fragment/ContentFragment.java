@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.wjp.mypc.MainActivity;
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BasePager;
 import com.wjp.mypc.base.impl.GovAffarisPager;
@@ -44,24 +46,30 @@ public class ContentFragment extends BaseFragment {
                 switch (checkedId){
                     case R.id.tab_home:
                         mViewpaer.setCurrentItem(0,false);//首页
+                        setSlidingMenuEnable(false);
                         break;
                     case R.id.tab_news:
                         mViewpaer.setCurrentItem(1,false);//新闻中心
+                        setSlidingMenuEnable(true);
                         break;
                     case R.id.tab_service:
                         mViewpaer.setCurrentItem(2,false);//智慧服务
+                        setSlidingMenuEnable(true);
                         break;
                     case R.id.tab_goveaff:
                         mViewpaer.setCurrentItem(3,false);//政务
+                        setSlidingMenuEnable(true);
                         break;
                     case R.id.tab_settings:
                         mViewpaer.setCurrentItem(4,false);//设置
+                        setSlidingMenuEnable(false);
                         break;
                 }
             }
         });
 
         basePagerList.get(0).initData();//手动加载第一页的数据
+        setSlidingMenuEnable(false);
         //设置viewpager页面切换时的监听
         mViewpaer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -106,6 +114,22 @@ public class ContentFragment extends BaseFragment {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view==object;
+        }
+    }
+
+    /**
+     * 开启或禁用侧边栏
+     *
+     * @param enable
+     */
+    protected void setSlidingMenuEnable(boolean enable) {
+        // 获取侧边栏对象
+        MainActivity mainUI = (MainActivity) mActivity;
+        SlidingMenu slidingMenu = mainUI.getSlidingMenu();
+        if (enable) {
+            slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        } else {
+            slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         }
     }
 }
