@@ -4,6 +4,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BasePager;
@@ -18,10 +19,12 @@ import java.util.ArrayList;
 public class ContentFragment extends BaseFragment {
     public ViewPager mViewpaer;//定义一个viewpager变量
     public ArrayList<BasePager> basePagerList;
+    public RadioGroup radioGroup;
     @Override
     public View initView() {
         View view=View.inflate(mActivity, R.layout.fragment_content,null);
         mViewpaer=view.findViewById(R.id.vp_content);//找到ViewPager
+        radioGroup=view.findViewById(R.id.rg_btn);
         return view;
     }
 
@@ -34,8 +37,52 @@ public class ContentFragment extends BaseFragment {
         basePagerList.add(new GovAffarisPager(mActivity));
         basePagerList.add(new SettingsPager(mActivity));
         mViewpaer.setAdapter(new myViewpager());
+        //设置底部点击监听
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.tab_home:
+                        mViewpaer.setCurrentItem(0,false);//首页
+                        break;
+                    case R.id.tab_news:
+                        mViewpaer.setCurrentItem(1,false);//新闻中心
+                        break;
+                    case R.id.tab_service:
+                        mViewpaer.setCurrentItem(2,false);//智慧服务
+                        break;
+                    case R.id.tab_goveaff:
+                        mViewpaer.setCurrentItem(3,false);//政务
+                        break;
+                    case R.id.tab_settings:
+                        mViewpaer.setCurrentItem(4,false);//设置
+                        break;
+                }
+            }
+        });
+
+        basePagerList.get(0).initData();//手动加载第一页的数据
+        //设置viewpager页面切换时的监听
+        mViewpaer.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                BasePager basePager=basePagerList.get(position);
+                basePager.initData();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
+    //viewpager的适配器
     class myViewpager extends PagerAdapter{
 
         @Override
@@ -46,7 +93,7 @@ public class ContentFragment extends BaseFragment {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             BasePager basePager=basePagerList.get(position);
-            basePager.initData();
+//            basePager.initData();如果在这里初始化数据，viewpager默认自动会加载下一页,所以为它设置一个监听，当页面改变时初始化数据
             container.addView(basePager.rootView);
             return basePager.rootView;
         }

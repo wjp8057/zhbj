@@ -3,6 +3,7 @@ package com.wjp.mypc.base.impl;
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.wjp.mypc.base.BasePager;
@@ -26,5 +27,7 @@ public class HomePager extends BasePager {
         flContent.addView(view);
         //更改标题
         tvTitle.setText("首页");
+        //隐藏menu图标
+        imgBtnMenu.setVisibility(View.INVISIBLE);
     }
 }
