@@ -23,5 +23,8 @@ public class GovAffarisPager extends BasePager {
         view.setTextColor(Color.RED);
         view.setGravity(Gravity.CENTER);
         flContent.addView(view);
+
+        //更改标题
+        tvTitle.setText("政务中心");
     }
 }
