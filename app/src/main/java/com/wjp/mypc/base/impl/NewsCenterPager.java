@@ -5,8 +5,13 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wjp.mypc.base.BasePager;
+
+import org.xutils.common.Callback;
+import org.xutils.common.util.LogUtil;
+import org.xutils.x;
 
 
 public class NewsCenterPager extends BasePager {
@@ -29,5 +34,41 @@ public class NewsCenterPager extends BasePager {
         tvTitle.setText("新闻中心");
         //显示menu图标
         imgBtnMenu.setVisibility(View.VISIBLE);
+//        getDataFromService();
+    }
+
+    /*
+    * 从服务器获取数据，获取之前需要权限
+    * */
+    private void   getDataFromService(){
+        BaiduParams params=new BaiduParams();
+        Callback.Cancelable cancelable= x.http().get(params,
+                new Callback.CacheCallback<String>() {
+                    @Override
+                    public boolean onCache(String result) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                            System.out.println("其他错误");
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        Toast.makeText(x.app(), "success", Toast.LENGTH_LONG).show();
+                        LogUtil.d(result.toString());
+                    }
+                });
     }
 }

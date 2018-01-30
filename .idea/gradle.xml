@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/librarydemo" />
             <option value="$PROJECT_DIR$/slidingmenu" />
+            <option value="$PROJECT_DIR$/xutilslibrary" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

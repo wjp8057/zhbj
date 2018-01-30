@@ -9,6 +9,8 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.wjp.mypc.fragment.ContentFragment;
 import com.wjp.mypc.fragment.LeftMenuFragment;
 
+import org.xutils.x;
+
 public class MainActivity extends SlidingFragmentActivity {
 
     private final String TAG_LEFT_MENU="TAG_LEFT_MENU";
@@ -21,6 +23,7 @@ public class MainActivity extends SlidingFragmentActivity {
         setContentView(R.layout.activity_main);
         setBehindContentView(R.layout.left_menu);
 
+        x.view().inject(this);
         SlidingMenu mneu=getSlidingMenu();
         getSlidingMenu().setMode(SlidingMenu.LEFT);
         mneu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);

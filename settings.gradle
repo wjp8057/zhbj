@@ -1,1 +1,1 @@
-include ':app', ':librarydemo', ':slidingmenu'
+include ':app', ':librarydemo', ':slidingmenu', ':xutilslibrary'
