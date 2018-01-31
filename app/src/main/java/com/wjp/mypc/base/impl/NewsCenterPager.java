@@ -2,6 +2,7 @@ package com.wjp.mypc.base.impl;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.wjp.mypc.base.BasePager;
 import com.wjp.mypc.domain.NewsMenu;
+import com.wjp.mypc.utils.CacheUtils;
 
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
@@ -39,6 +41,16 @@ public class NewsCenterPager extends BasePager {
         tvTitle.setText("新闻中心");
         //显示menu图标
         imgBtnMenu.setVisibility(View.VISIBLE);
+//        getDataFromService();
+
+        /*
+        * 判断缓存是否有数据
+        * */
+        String isCache=CacheUtils.getCache(CATEGORY_URL,mActivity);
+        if(!TextUtils.isEmpty(isCache)){
+                System.out.println("缓存出现了");
+        }
+        //为了增强用户体验，不管有没有缓存，我们都要去获取最新的数据
         getDataFromService();
     }
 
@@ -78,5 +90,8 @@ public class NewsCenterPager extends BasePager {
     protected void processData(String result){
             Gson gson=new Gson();
             System.out.println("结果:"+gson.fromJson(result,NewsMenu.class));
+
+            //写缓存
+            CacheUtils.setCache(CATEGORY_URL,result,mActivity);
     }
 }
