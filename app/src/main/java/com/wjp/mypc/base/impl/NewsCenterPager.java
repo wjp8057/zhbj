@@ -5,12 +5,11 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wjp.mypc.base.BasePager;
 
 import org.xutils.common.Callback;
-import org.xutils.common.util.LogUtil;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -42,36 +41,27 @@ public class NewsCenterPager extends BasePager {
     * 从服务器获取数据，获取之前需要权限
     * */
     private void   getDataFromService(){
-//        BaiduParams params=new BaiduParams();
-        RequestParams params = new RequestParams("http://localhost:8080/zhbj/categories.json");
-//        params.addQueryStringParameter("username","abc");
-//        params.addQueryStringParameter("password","123");
-        Callback.Cancelable cancelable= x.http().get(params,
-                new Callback.CacheCallback<String>() {
-                    @Override
-                    public boolean onCache(String result) {
-                        return false;
-                    }
+        RequestParams params = new RequestParams("http://10.0.2.2:8080/zhbj/categories.json ");
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                System.out.println("结果:"+result);
+            }
 
-                    @Override
-                    public void onCancelled(CancelledException cex) {
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                System.out.println("结果:错误");
+            }
 
-                    }
+            @Override
+            public void onCancelled(CancelledException cex) {
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                            System.out.println("其他错误");
-                    }
+            }
 
-                    @Override
-                    public void onFinished() {
+            @Override
+            public void onFinished() {
 
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        System.out.println("结果:"+result);
-                    }
-                });
+            }
+        });
     }
 }

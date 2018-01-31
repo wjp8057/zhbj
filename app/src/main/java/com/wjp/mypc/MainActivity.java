@@ -23,7 +23,7 @@ public class MainActivity extends SlidingFragmentActivity {
         setContentView(R.layout.activity_main);
         setBehindContentView(R.layout.left_menu);
 
-        x.view().inject(this);
+
         SlidingMenu mneu=getSlidingMenu();
         getSlidingMenu().setMode(SlidingMenu.LEFT);
         mneu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
