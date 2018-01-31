@@ -28,5 +28,6 @@ dependencies {
     compile project(':librarydemo')
     implementation project(':slidingmenu')
     implementation project(':xutilslibrary')
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
 

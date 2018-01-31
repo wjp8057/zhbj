@@ -5,13 +5,18 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.wjp.mypc.base.BasePager;
+import com.wjp.mypc.domain.NewsMenu;
 
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
+
+import static com.wjp.mypc.global.GlobalConstants.CATEGORY_URL;
 
 
 public class NewsCenterPager extends BasePager {
@@ -41,16 +46,18 @@ public class NewsCenterPager extends BasePager {
     * 从服务器获取数据，获取之前需要权限
     * */
     private void   getDataFromService(){
-        RequestParams params = new RequestParams("http://10.0.2.2:8080/zhbj/categories.json ");
-        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
+        RequestParams params = new RequestParams(CATEGORY_URL);
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String> (){
             @Override
             public void onSuccess(String result) {
-                System.out.println("结果:"+result);
+                processData(result);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                System.out.println("结果:错误");
+                //请求失败
+                ex.printStackTrace();
+                Toast.makeText(mActivity,ex.getMessage(),Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -63,5 +70,13 @@ public class NewsCenterPager extends BasePager {
 
             }
         });
+    }
+
+    /*
+    * 解析json数据
+    * */
+    protected void processData(String result){
+            Gson gson=new Gson();
+            System.out.println("结果:"+gson.fromJson(result,NewsMenu.class));
     }
 }
