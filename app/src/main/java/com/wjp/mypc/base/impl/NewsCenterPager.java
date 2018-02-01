@@ -2,6 +2,7 @@ package com.wjp.mypc.base.impl;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -9,8 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.wjp.mypc.MainActivity;
 import com.wjp.mypc.base.BasePager;
 import com.wjp.mypc.domain.NewsMenu;
+import com.wjp.mypc.fragment.LeftMenuFragment;
 import com.wjp.mypc.utils.CacheUtils;
 
 import org.xutils.common.Callback;
@@ -41,7 +44,6 @@ public class NewsCenterPager extends BasePager {
         tvTitle.setText("新闻中心");
         //显示menu图标
         imgBtnMenu.setVisibility(View.VISIBLE);
-//        getDataFromService();
 
         /*
         * 判断缓存是否有数据
@@ -89,9 +91,17 @@ public class NewsCenterPager extends BasePager {
     * */
     protected void processData(String result){
             Gson gson=new Gson();
-            System.out.println("结果:"+gson.fromJson(result,NewsMenu.class));
+            NewsMenu newsMenu=gson.fromJson(result,NewsMenu.class);
+            System.out.println("结果:"+newsMenu);
 
             //写缓存
             CacheUtils.setCache(CATEGORY_URL,result,mActivity);
+
+            //获取侧边栏对象及给侧边栏设置数据
+            MainActivity  mainUI=(MainActivity)mActivity;
+            FragmentManager fm=mainUI.getSupportFragmentManager();
+            LeftMenuFragment leftMenuFragment=(LeftMenuFragment) fm.findFragmentByTag("TAG_LEFT_MENU");
+            //给左侧菜单设置数据
+            leftMenuFragment.setLeftMenuData(newsMenu.data);
     }
 }

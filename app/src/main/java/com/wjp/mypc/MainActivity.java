@@ -3,13 +3,11 @@ package com.wjp.mypc;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.wjp.mypc.fragment.ContentFragment;
 import com.wjp.mypc.fragment.LeftMenuFragment;
 
-import org.xutils.x;
 
 public class MainActivity extends SlidingFragmentActivity {
 
@@ -18,7 +16,6 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
 //        Utils.testLib();
         setContentView(R.layout.activity_main);
         setBehindContentView(R.layout.left_menu);
@@ -43,7 +40,5 @@ public class MainActivity extends SlidingFragmentActivity {
         transaction.replace(R.id.fl_left_menu,new LeftMenuFragment(),TAG_LEFT_MENU);
         transaction.replace(R.id.fl_main,new ContentFragment(),TAG_CONTENT);
         transaction.commit();
-
-
     }
 }

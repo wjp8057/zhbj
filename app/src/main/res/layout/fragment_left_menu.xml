@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/colorBlack"
     android:layout_height="match_parent">
 
-
+    <!--
+    父元素和引入的布局都要设置成了match_parent
+    如果ListView的高写成wrap_content，那么它的高不确定的，需要做多次的校验，确认数据是否能完全显示出来。-->
+    <ListView
+        android:id="@+id/lv_leftmenu"
+        android:layout_width="match_parent"
+        android:divider="@null"
+        android:layout_height="match_parent"/>
 </RelativeLayout>
