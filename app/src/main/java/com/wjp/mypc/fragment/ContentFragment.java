@@ -53,6 +53,7 @@ public class ContentFragment extends BaseFragment {
                         setSlidingMenuEnable(true);
                         break;
                     case R.id.tab_service:
+                        
                         mViewpaer.setCurrentItem(2,false);//智慧服务
                         setSlidingMenuEnable(true);
                         break;
@@ -131,5 +132,11 @@ public class ContentFragment extends BaseFragment {
         } else {
             slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         }
+    }
+
+    // 获取新闻中心页面
+    public NewsCenterPager getNewsCenterPager() {
+        NewsCenterPager pager =(NewsCenterPager) basePagerList.get(1);
+        return pager;
     }
 }

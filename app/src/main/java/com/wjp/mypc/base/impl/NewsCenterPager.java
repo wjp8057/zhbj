@@ -11,7 +11,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.wjp.mypc.MainActivity;
+import com.wjp.mypc.base.BaseMenuDetailPager;
 import com.wjp.mypc.base.BasePager;
+import com.wjp.mypc.base.impl.leftmenu.InteractMenuDetailPager;
+import com.wjp.mypc.base.impl.leftmenu.NewsMenuDetailPager;
+import com.wjp.mypc.base.impl.leftmenu.PhotosMenuDetailPager;
+import com.wjp.mypc.base.impl.leftmenu.TopictMenuDetailPager;
 import com.wjp.mypc.domain.NewsMenu;
 import com.wjp.mypc.fragment.LeftMenuFragment;
 import com.wjp.mypc.utils.CacheUtils;
@@ -21,10 +26,15 @@ import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.ArrayList;
+
 import static com.wjp.mypc.global.GlobalConstants.CATEGORY_URL;
 
 
 public class NewsCenterPager extends BasePager {
+
+    private ArrayList<BaseMenuDetailPager> baseMenuDetailPagers;
+    private  NewsMenu newsMenu;
 
     public NewsCenterPager(Activity activity) {
         super(activity);
@@ -91,7 +101,7 @@ public class NewsCenterPager extends BasePager {
     * */
     protected void processData(String result){
             Gson gson=new Gson();
-            NewsMenu newsMenu=gson.fromJson(result,NewsMenu.class);
+            newsMenu=gson.fromJson(result,NewsMenu.class);
             System.out.println("结果:"+newsMenu);
 
             //写缓存
@@ -103,5 +113,33 @@ public class NewsCenterPager extends BasePager {
             LeftMenuFragment leftMenuFragment=(LeftMenuFragment) fm.findFragmentByTag("TAG_LEFT_MENU");
             //给左侧菜单设置数据
             leftMenuFragment.setLeftMenuData(newsMenu.data);
+
+            /*
+            * 初始化侧边栏的页面
+            * */
+            baseMenuDetailPagers=new ArrayList<BaseMenuDetailPager>();
+            baseMenuDetailPagers.add(new NewsMenuDetailPager(mActivity));
+            baseMenuDetailPagers.add(new TopictMenuDetailPager(mActivity));
+            baseMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity));
+            baseMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));
+
+            //将侧边栏菜单中的新闻设置为默认页面
+
+    }
+
+    //设置侧边栏菜单详情页
+    public void setCurrentDetailPager(int position){
+        BaseMenuDetailPager pager=baseMenuDetailPagers.get(position);
+        View view=pager.mRootView;
+
+        //清除之前的旧布局
+        flContent.removeAllViews();
+
+        flContent.addView(view);
+
+        //初始化页面数据
+        pager.initData();
+
+        tvTitle.setText(newsMenu.data.get(position).title);
     }
 }

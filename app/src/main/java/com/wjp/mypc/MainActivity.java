@@ -41,4 +41,6 @@ public class MainActivity extends SlidingFragmentActivity {
         transaction.replace(R.id.fl_main,new ContentFragment(),TAG_CONTENT);
         transaction.commit();
     }
+
+
 }
