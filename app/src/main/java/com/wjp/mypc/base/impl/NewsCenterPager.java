@@ -119,7 +119,10 @@ public class NewsCenterPager extends BasePager {
             * 初始化侧边栏的页面
             * */
             baseMenuDetailPagers=new ArrayList<BaseMenuDetailPager>();
-            baseMenuDetailPagers.add(new NewsMenuDetailPager(mActivity));
+            /*
+            * 传递数据给侧边栏
+            * */
+            baseMenuDetailPagers.add(new NewsMenuDetailPager(mActivity,newsMenu.data.get(0).children));
             baseMenuDetailPagers.add(new TopictMenuDetailPager(mActivity));
             baseMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity));
             baseMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));
