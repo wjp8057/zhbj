@@ -53,7 +53,7 @@ public class ContentFragment extends BaseFragment {
                         setSlidingMenuEnable(true);
                         break;
                     case R.id.tab_service:
-                        
+
                         mViewpaer.setCurrentItem(2,false);//智慧服务
                         setSlidingMenuEnable(true);
                         break;
@@ -65,6 +65,8 @@ public class ContentFragment extends BaseFragment {
                         mViewpaer.setCurrentItem(4,false);//设置
                         setSlidingMenuEnable(false);
                         break;
+                        default:
+                            break;
                 }
             }
         });

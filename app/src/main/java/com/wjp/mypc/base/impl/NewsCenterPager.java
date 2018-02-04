@@ -42,13 +42,13 @@ public class NewsCenterPager extends BasePager {
 
     @Override
     public void initData() {
-        System.out.println("新闻中心");
-        TextView view=new TextView(mActivity);
-        view.setText("新闻中心");
-        view.setTextSize(25);
-        view.setTextColor(Color.RED);
-        view.setGravity(Gravity.CENTER);
-        flContent.addView(view);
+//        System.out.println("新闻中心");
+//        TextView view=new TextView(mActivity);
+//        view.setText("新闻中心");
+//        view.setTextSize(25);
+//        view.setTextColor(Color.RED);
+//        view.setGravity(Gravity.CENTER);
+//        flContent.addView(view);
 
         //更改标题
         tvTitle.setText("新闻中心");
@@ -61,6 +61,7 @@ public class NewsCenterPager extends BasePager {
         String isCache=CacheUtils.getCache(CATEGORY_URL,mActivity);
         if(!TextUtils.isEmpty(isCache)){
                 System.out.println("缓存出现了");
+                processData(isCache);
         }
         //为了增强用户体验，不管有没有缓存，我们都要去获取最新的数据
         getDataFromService();
@@ -124,7 +125,7 @@ public class NewsCenterPager extends BasePager {
             baseMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));
 
             //将侧边栏菜单中的新闻设置为默认页面
-
+            setCurrentDetailPager(0);
     }
 
     //设置侧边栏菜单详情页
