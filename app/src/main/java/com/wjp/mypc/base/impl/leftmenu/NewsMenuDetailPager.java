@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -28,6 +29,7 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager implements ViewPage
     private TabPageIndicator tabPageIndicator;
     private ArrayList<NewsMenu.NewsTabData> mNewsTabData;
     private ViewPager viewPager;
+    private ImageButton mNextBtn;
 
     //页签对象
     private ArrayList<TabDetailPager> mtabDetailPagers;
@@ -50,6 +52,16 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager implements ViewPage
         * */
         viewPager=(ViewPager) view.findViewById(R.id.menu_detail_content);
         tabPageIndicator=(TabPageIndicator)view.findViewById(R.id.indicator);
+        //下一页按钮的ImageButton
+        mNextBtn=(ImageButton) view.findViewById(R.id.btn_next);
+        mNextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentItem=viewPager.getCurrentItem();
+                currentItem++;
+                viewPager.setCurrentItem(currentItem);
+            }
+        });
         return view;
     }
 
@@ -135,4 +147,6 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager implements ViewPage
             slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         }
     }
+
+
 }
