@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.viewpagerindicator.TabPageIndicator;
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BaseMenuDetailPager;
 import com.wjp.mypc.domain.NewsMenu;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  * @date 2018/02/04 15:49
  */
 public class NewsMenuDetailPager extends BaseMenuDetailPager {
-
+    private TabPageIndicator tabPageIndicator;
     private ArrayList<NewsMenu.NewsTabData> mNewsTabData;
     private ViewPager viewPager;
 
@@ -45,6 +46,7 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager {
         * 不能在这个方法为viewpager设置适配器，因为构造方法继承了父类构造方法，父类在构造方法也执行initVIew方法，...
         * */
         viewPager=(ViewPager) view.findViewById(R.id.menu_detail_content);
+        tabPageIndicator=(TabPageIndicator)view.findViewById(R.id.indicator);
         return view;
     }
 
@@ -58,7 +60,7 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager {
             mtabDetailPagers.add(new TabDetailPager(mActivity,mNewsTabData.get(i)));
         }
         viewPager.setAdapter(new NewsMenuDetailAdapter());
-
+        tabPageIndicator.setViewPager(viewPager);//必须在viewpager设置完数据之后
     }
 
     class NewsMenuDetailAdapter extends PagerAdapter{
@@ -84,6 +86,11 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view==object;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return  mNewsTabData.get(position).title;
         }
     }
 }
