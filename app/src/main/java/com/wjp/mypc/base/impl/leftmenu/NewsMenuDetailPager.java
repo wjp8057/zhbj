@@ -114,6 +114,9 @@ public class NewsMenuDetailPager extends BaseMenuDetailPager implements ViewPage
         }
     }
 
+    /*
+    * 一下3个方法时Viewpager监听重写
+    * */
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
