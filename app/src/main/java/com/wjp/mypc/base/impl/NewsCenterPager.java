@@ -103,7 +103,7 @@ public class NewsCenterPager extends BasePager {
     protected void processData(String result){
             Gson gson=new Gson();
             newsMenu=gson.fromJson(result,NewsMenu.class);
-            System.out.println("结果:"+newsMenu);
+//            System.out.println("结果:"+newsMenu);
 
             //写缓存
             CacheUtils.setCache(CATEGORY_URL,result,mActivity);
