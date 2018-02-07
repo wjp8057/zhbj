@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BaseMenuDetailPager;
@@ -19,14 +18,10 @@ import com.wjp.mypc.domain.NewsMenu;
 import com.wjp.mypc.global.GlobalConstants;
 import com.wjp.mypc.utils.CacheUtils;
 import com.wjp.mypc.view.TabNewsViewPager;
-
-import org.w3c.dom.Text;
 import org.xutils.common.Callback;
-import org.xutils.common.util.DensityUtil;
 import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
-import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -43,10 +38,12 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private TabNewsViewPager vp_tabdetail;
     private String mUrl;
     private NewTabBean mNewstabdatas;
+    //头条新闻
     public ArrayList<NewTabBean.NewsTabtopnews> mTopnews;
+    //标题
+    private TextView tv_title;
 
     public TabDetailPager(Activity activity,NewsMenu.NewsTabData m) {
-
         super(activity);
         this.newsMenuData=m;
         //新闻的链接
@@ -57,14 +54,14 @@ public class TabDetailPager extends BaseMenuDetailPager {
     public View initView() {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
         vp_tabdetail=view.findViewById(R.id.vp_tabdetail);
+        tv_title=view.findViewById(R.id.tb_title);
         /*
         *此处空指针异常
-        * view.setText(newsMenuData.title);
-        * */
-
-//        view.setTextSize(25);
-//        view.setTextColor(Color.RED);
-//        view.setGravity(Gravity.CENTER);
+        view.setText(newsMenuData.title);
+         *
+        view.setTextSize(25);
+        view.setTextColor(Color.RED);
+        view.setGravity(Gravity.CENTER);*/
         return view;
     }
 
@@ -87,20 +84,23 @@ public class TabDetailPager extends BaseMenuDetailPager {
     }
 
     class tabdetail extends PagerAdapter{
-
-
         @Override
         public int getCount() {
             return mTopnews.size();
         }
-
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ImageView view=new ImageView(mActivity);
-            System.out.println("图片链接:"+mTopnews.get(position).getTopimage());
+//            System.out.println("图片链接:"+mTopnews.get(position).getTopimage());
 //            view.setImageResource(R.drawable.pic_item_list_default);
             //设置图片显示的参数
-            ImageOptions imageOptions = new ImageOptions.Builder().setImageScaleType(ImageView.ScaleType.CENTER_CROP).build();
+            ImageOptions imageOptions = new ImageOptions.Builder()
+                    .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    //加载过程中显示的图片
+                    .setLoadingDrawableId(R.drawable.pic_item_list_default)
+                    //加载失败后显示的图片
+                    .setFailureDrawableId(R.drawable.pic_item_list_default)
+                    .build();
             /*参数：
             * 图片要显示在哪个ImageView中；图片的链接；图片的参数
             * */
@@ -108,12 +108,10 @@ public class TabDetailPager extends BaseMenuDetailPager {
             container.addView(view);
             return view;
         }
-
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View)object);
         }
-
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view==object;
@@ -130,6 +128,9 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 /*Gson gson=new Gson();
                 NewTabBean newTabBean=gson.fromJson(result, NewTabBean.class);
                 System.out.println("结果:"+newTabBean);*/
+                /*
+                * 保存结果
+                * */
                 CacheUtils.setCache(mUrl,result,mActivity);
                 analysis(result);
             }
@@ -162,6 +163,24 @@ public class TabDetailPager extends BaseMenuDetailPager {
 //        System.out.println("大小："+mTopnews);
         if(mTopnews!=null){
             vp_tabdetail.setAdapter(new tabdetail());
+            tv_title.setText(mTopnews.get(0).getTitle());
+            vp_tabdetail.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    tv_title.setText(mTopnews.get(position).getTitle());
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
         }
+
     }
 }
