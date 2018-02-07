@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.gson.Gson;
+import com.viewpagerindicator.CirclePageIndicator;
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BaseMenuDetailPager;
 import com.wjp.mypc.domain.NewTabBean;
@@ -42,7 +43,8 @@ public class TabDetailPager extends BaseMenuDetailPager {
     public ArrayList<NewTabBean.NewsTabtopnews> mTopnews;
     //标题
     private TextView tv_title;
-
+    //轮播图片小圆圈
+    private CirclePageIndicator mCircleIndicator;
     public TabDetailPager(Activity activity,NewsMenu.NewsTabData m) {
         super(activity);
         this.newsMenuData=m;
@@ -55,6 +57,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
         vp_tabdetail=view.findViewById(R.id.vp_tabdetail);
         tv_title=view.findViewById(R.id.tb_title);
+        mCircleIndicator=view.findViewById(R.id.indicator);
         /*
         *此处空指针异常
         view.setText(newsMenuData.title);
@@ -164,6 +167,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
         if(mTopnews!=null){
             vp_tabdetail.setAdapter(new tabdetail());
             tv_title.setText(mTopnews.get(0).getTitle());
+            /*
+            * 设置图片轮播时的小圆圈
+            * */
+            mCircleIndicator.setViewPager(vp_tabdetail);
+            mCircleIndicator.setSnap(true);
+            /*
+            *默认让第一个选择，解决页面销毁后重新初始化，小圆点跟图片对不上号的问题
+            * */
+            mCircleIndicator.onPageSelected(0);
             vp_tabdetail.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
