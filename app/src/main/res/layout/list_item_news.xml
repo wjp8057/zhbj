@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:layout_height="match_parent">
+    
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:scaleType="fitXY"
+        android:padding="1dp"
+        android:background="@color/colorGray"
+        android:src="@drawable/pic_item_list_default"/>
+    
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/iv_icon"
+        android:maxLines="2"
+        android:textSize="16dp"
+        android:ellipsize="end"
+        android:textColor="@color/colorBlack"
+        android:text="from 数值或数组。动画起始数值或数值数组。
+to 数值或数组。动画结束数值或数值数组。
+setter 函数。接受一个数值参数的贴心函数。
+duration 数值。动画持续时间，单位是毫秒。
+easing 函数。来自mina或自定义的缓动函数。
+callback 函数。动画结束时候执行的回调函数。"/>
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_toRightOf="@+id/iv_icon"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/colorGray2"
+        android:textSize="14dp"
+        android:text="2017-9-15 12:32"/>
+
+</RelativeLayout>

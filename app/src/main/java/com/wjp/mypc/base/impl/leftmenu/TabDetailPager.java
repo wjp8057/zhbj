@@ -1,6 +1,7 @@
 package com.wjp.mypc.base.impl.leftmenu;
 
 import android.app.Activity;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -8,7 +9,10 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -40,11 +44,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private String mUrl;
     private NewTabBean mNewstabdatas;
     //头条新闻
-    public ArrayList<NewTabBean.NewsTabtopnews> mTopnews;
+    private ArrayList<NewTabBean.NewsTabtopnews> mTopnews;
     //标题
     private TextView tv_title;
     //轮播图片小圆圈
     private CirclePageIndicator mCircleIndicator;
+    //新闻列表listview
+    private ListView mListView;
+    //新闻内容
+    private ArrayList<NewTabBean.NewsTabnews> mNews;
     public TabDetailPager(Activity activity,NewsMenu.NewsTabData m) {
         super(activity);
         this.newsMenuData=m;
@@ -55,9 +63,14 @@ public class TabDetailPager extends BaseMenuDetailPager {
     @Override
     public View initView() {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
-        vp_tabdetail=view.findViewById(R.id.vp_tabdetail);
-        tv_title=view.findViewById(R.id.tb_title);
-        mCircleIndicator=view.findViewById(R.id.indicator);
+        mListView=view.findViewById(R.id.lv_tabdetail);
+        /*给listview添加一个头布局，让图片能向上滑*/
+        View headview=View.inflate(mActivity,R.layout.list_item_header,null);
+        mListView.addHeaderView(headview);
+        vp_tabdetail=headview.findViewById(R.id.vp_tabdetail);
+        tv_title=headview.findViewById(R.id.tb_title);
+        mCircleIndicator=headview.findViewById(R.id.indicator);
+
         /*
         *此处空指针异常
         view.setText(newsMenuData.title);
@@ -159,12 +172,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
     protected void analysis(String res){
         Gson gson=new Gson();
         mNewstabdatas=gson.fromJson(res,NewTabBean.class);
-
-//        System.out.println("请求结果:"+mNewstabdatas);
-//        System.out.println("请求结果:"+mNewstabdatas.data.getTopnews());
         mTopnews=mNewstabdatas.data.getTopnews();
-//        System.out.println("大小："+mTopnews);
+        /*
+        * 新闻内容
+        * */
+        mNews=mNewstabdatas.data.getNews();
         if(mTopnews!=null){
+            /*
+            图片的adapter
+            * */
             vp_tabdetail.setAdapter(new tabdetail());
             tv_title.setText(mTopnews.get(0).getTitle());
             /*
@@ -192,7 +208,71 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
                 }
             });
+            /*
+            * listview的adapter
+            * */
+            mListView.setAdapter(new myListViewAdapter());
         }
 
+    }
+
+    class myListViewAdapter extends BaseAdapter{
+        @Override
+        public int getCount() {
+            return mNews.size();
+        }
+
+        @Override
+        public NewTabBean.NewsTabnews getItem(int position) {
+            return mNews.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView==null){
+                convertView=View.inflate(mActivity,R.layout.list_item_news,null);
+                holder=new ViewHolder();
+                holder.ivIcon=(ImageView) convertView.findViewById(R.id.iv_icon);
+                holder.tvTtile=(TextView)convertView.findViewById(R.id.tv_title);
+                holder.tvData=(TextView)convertView.findViewById(R.id.tv_date);
+                convertView.setTag(holder);
+            }else {
+                holder=(ViewHolder)convertView.getTag();
+                /*
+                * 设置图片
+                * */
+                ImageOptions imageOptions = new ImageOptions.Builder()
+                        .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        //加载过程中显示的图片
+                        .setLoadingDrawableId(R.drawable.pic_item_list_default)
+                        //加载失败后显示的图片
+                        .setFailureDrawableId(R.drawable.pic_item_list_default)
+                        .build();
+                /*参数：
+                 * 图片要显示在哪个ImageView中；图片的链接；图片的参数
+                 * */
+                x.image().bind(holder.ivIcon, mNews.get(position).getListimage(),imageOptions);
+                /*
+                * 设置标题
+                * */
+                holder.tvTtile.setText(mNews.get(position).getTitle());
+                /*
+                * 设置时间
+                * */
+               holder.tvData.setText(mNews.get(position).getPubdate());
+            }
+            return convertView;
+        }
+    }
+
+    static class ViewHolder{
+        public ImageView ivIcon;
+        public TextView tvTtile,tvData;
     }
 }

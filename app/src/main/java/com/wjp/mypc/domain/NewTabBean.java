@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 public class NewTabBean {
     public int retcode;
+    public NewsTab data;
 
     public int getRetcode() {
         return retcode;
@@ -17,7 +18,7 @@ public class NewTabBean {
         return data;
     }
 
-    public NewsTab data;
+
 
     public void setRetcode(int retcode) {
         this.retcode = retcode;
@@ -25,16 +26,6 @@ public class NewTabBean {
 
     public void setData(NewsTab data) {
         this.data = data;
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "NewTabBean{" +
-                "retcode=" + retcode +
-                ", data=" + data +
-                '}';
     }
 
     public class NewsTab{
@@ -94,19 +85,6 @@ public class NewTabBean {
         public void setTopnews(ArrayList<NewsTabtopnews> topnews) {
             this.topnews = topnews;
         }
-
-
-        @Override
-        public String toString() {
-            return "NewsTab{" +
-                    "countcommenturl='" + countcommenturl + '\'' +
-                    ", more='" + more + '\'' +
-                    ", title='" + title + '\'' +
-                    ", news=" + news +
-                    ", topic=" + topic +
-                    ", tonews=" + topnews +
-                    '}';
-        }
     }
 
     public class NewsTabnews{
@@ -115,6 +93,10 @@ public class NewTabBean {
         String commenturl;
         int id;
         String listimage;
+        String pubdate;
+        String title;
+        String type;
+        String url;
 
         public boolean isComment() {
             return comment;
@@ -152,11 +134,6 @@ public class NewTabBean {
             return url;
         }
 
-        String pubdate;
-        String title;
-        String type;
-        String url;
-
         public void setComment(boolean comment) {
             this.comment = comment;
         }
@@ -191,22 +168,6 @@ public class NewTabBean {
 
         public void setUrl(String url) {
             this.url = url;
-        }
-
-
-        @Override
-        public String toString() {
-            return "NewsTabnews{" +
-                    "comment=" + comment +
-                    ", commentlist='" + commentlist + '\'' +
-                    ", commenturl='" + commenturl + '\'' +
-                    ", id=" + id +
-                    ", listimage='" + listimage + '\'' +
-                    ", pubdate='" + pubdate + '\'' +
-                    ", title='" + title + '\'' +
-                    ", type='" + type + '\'' +
-                    ", url='" + url + '\'' +
-                    '}';
         }
     }
 
@@ -274,19 +235,6 @@ public class NewTabBean {
         public void setUrl(String url) {
             this.url = url;
         }
-
-        @Override
-        public String toString() {
-            return "NewsTabtopic{" +
-                    "description='" + description + '\'' +
-                    ", commenturl='" + commenturl + '\'' +
-                    ", id=" + id +
-                    ", listimage='" + listimage + '\'' +
-                    ", sort='" + sort + '\'' +
-                    ", title='" + title + '\'' +
-                    ", url='" + url + '\'' +
-                    '}';
-        }
     }
 
     public class NewsTabtopnews{
@@ -296,7 +244,9 @@ public class NewTabBean {
         int id;
         String pubdate;
         String title;
-
+        String topimage;
+        String type;
+        String url;
 
         public void setTopimage(String topimage) {
             this.topimage = topimage;
@@ -305,10 +255,6 @@ public class NewTabBean {
         public String getTopimage() {
             return topimage;
         }
-
-        String topimage;
-        String type;
-        String url;
 
         public boolean isComment() {
             return comment;
@@ -342,8 +288,6 @@ public class NewTabBean {
             return url;
         }
 
-
-
         public void setComment(boolean comment) {
             this.comment = comment;
         }
@@ -375,22 +319,5 @@ public class NewTabBean {
         public void setUrl(String url) {
             this.url = url;
         }
-
-
-
-        @Override
-        public String toString() {
-            return "NewsTabtopnews{" +
-                    "comment=" + comment +
-                    ", commentlist='" + commentlist + '\'' +
-                    ", commenturl='" + commenturl + '\'' +
-                    ", id=" + id +
-                    ", pubdate='" + pubdate + '\'' +
-                    ", title='" + title + '\'' +
-                    ", type='" + type + '\'' +
-                    ", url='" + url + '\'' +
-                    '}';
-        }
-
     }
 }
