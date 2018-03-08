@@ -77,6 +77,10 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 //动画结束，跳转页面，如果是第一次，则进入新手引导页，否则跳转主页面
+
+                /*
+                * 没有值取默认值
+                * */
                 boolean isFirstEnter= PrefUtils.getBoolean(SplashActivity.this,"is_first_enter",true);
                 Intent intent;
                 if (isFirstEnter){

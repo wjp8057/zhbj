@@ -22,6 +22,7 @@ import com.wjp.mypc.domain.NewTabBean;
 import com.wjp.mypc.domain.NewsMenu;
 import com.wjp.mypc.global.GlobalConstants;
 import com.wjp.mypc.utils.CacheUtils;
+import com.wjp.mypc.view.PullToRefreshListView;
 import com.wjp.mypc.view.TabNewsViewPager;
 import org.xutils.common.Callback;
 import org.xutils.http.HttpMethod;
@@ -50,7 +51,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
     //轮播图片小圆圈
     private CirclePageIndicator mCircleIndicator;
     //新闻列表listview
-    private ListView mListView;
+    private PullToRefreshListView mListView;
     //新闻内容
     private ArrayList<NewTabBean.NewsTabnews> mNews;
     public TabDetailPager(Activity activity,NewsMenu.NewsTabData m) {
@@ -63,7 +64,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
     @Override
     public View initView() {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
-        mListView=view.findViewById(R.id.lv_tabdetail);
+        mListView=(PullToRefreshListView) view.findViewById(R.id.lv_tabdetail);
         /*给listview添加一个头布局，让图片能向上滑*/
         View headview=View.inflate(mActivity,R.layout.list_item_header,null);
         mListView.addHeaderView(headview);
