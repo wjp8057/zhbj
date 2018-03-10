@@ -68,6 +68,15 @@ public class TabDetailPager extends BaseMenuDetailPager {
         /*给listview添加一个头布局，让图片能向上滑*/
         View headview=View.inflate(mActivity,R.layout.list_item_header,null);
         mListView.addHeaderView(headview);
+
+        //回调
+        mListView.setOnRefershListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getDataServer();
+            }
+        });
+
         vp_tabdetail=headview.findViewById(R.id.vp_tabdetail);
         tv_title=headview.findViewById(R.id.tb_title);
         mCircleIndicator=headview.findViewById(R.id.indicator);
@@ -138,6 +147,8 @@ public class TabDetailPager extends BaseMenuDetailPager {
     //请求网络数据
     protected void getDataServer(){
         RequestParams params=new RequestParams(GlobalConstants.SERVER_URL+mUrl);
+        params.setConnectTimeout(6000);
+        params.setReadTimeout(6000);
 //        System.out.println("参数："+params);
         x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
             @Override
@@ -150,11 +161,14 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 * */
                 CacheUtils.setCache(mUrl,result,mActivity);
                 analysis(result);
+
+                //刷新结束，收起控件
+                mListView.OnRefreshComplete(true);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                mListView.OnRefreshComplete(false);
             }
 
             @Override

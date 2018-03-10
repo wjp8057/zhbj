@@ -12,12 +12,14 @@
         android:paddingRight="10dp">
 
         <ImageView
+            android:id="@+id/img_jiantou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/common_listview_headview_red_arrow"
             android:layout_gravity="center"/>
 
         <ProgressBar
+            android:id="@+id/pb_jdt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
@@ -33,6 +35,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_zt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="下拉刷新"
@@ -40,6 +43,7 @@
             android:textSize="18sp"/>
 
         <TextView
+            android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2018-03-08 15:31"
