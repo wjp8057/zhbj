@@ -15,6 +15,10 @@
 ## 智慧北京  第5天 ##
 1、定义‘加载更多’的布局
 
+![](https://i.imgur.com/zSIonSM.png)
+
 2、在初始化的时候调用自定义的foot布局
 
 3、ListView实现滑动监听，滑动状态中到最后一个item时自定调用‘加载更多’
+
+4、将‘加载更多’的数据追加原来的listview中，然后用listview的适配器调用notifyDataSetChanged（刷新）此方法
