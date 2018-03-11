@@ -57,20 +57,20 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
 
     public PullToRefreshListView(Context context) {
         super(context);
-//        initHeaderView();
-//        initFootview();
+        initHeaderView();
+        initFootview();
     }
 
     public PullToRefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-//        initHeaderView();
-//        initFootview();
+        initHeaderView();
+        initFootview();
     }
 
     public PullToRefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-//        initHeaderView();
-//        initFootview();
+        initHeaderView();
+        initFootview();
     }
 
     /*
@@ -87,7 +87,6 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
         //隐藏头布局
         mHeaderView.measure(0,0);
         mHeaderViewHeight=mHeaderView.getMeasuredHeight();
-        Log.d("mHeaderViewHeight",String.valueOf(mHeaderViewHeight));
         mHeaderView.setPadding(0,-mHeaderViewHeight,0,0);
 
         initAnim();
@@ -99,20 +98,15 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
         switch (ev.getAction()){
             case MotionEvent.ACTION_DOWN:
                 startY=(int)ev.getY();
-                Log.d("startY1",String.valueOf(startY));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (startY == -1) {// 当用户按住头条新闻的viewpager进行下拉时,ACTION_DOWN会被viewpager消费掉,
                     // 导致startY没有赋值,此处需要重新获取一下
                     startY = (int) ev.getY();
-                    Log.d("ACTION_MOVE :startY",String.valueOf(startY));
                 }
                 int endY=(int)ev.getY();
-                Log.d("endY",String.valueOf(endY));
                 int dy=endY-startY;
-                Log.d("dy",String.valueOf(dy));
                 int firstVisiblePosition=getFirstVisiblePosition();
-
                 if (mCurrentState==STATE_REFRESHING){
                     break;
                 }
@@ -120,7 +114,6 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
                 //必须下拉，并且当前显示的是第一个item
                 if (dy>0&&firstVisiblePosition==0){
                     int paddingHeight=dy-mHeaderViewHeight;//计算当前下拉控件的padding值
-                    Log.d("paddingHeight",String.valueOf(paddingHeight));
                     mHeaderView.setPadding(0,paddingHeight,0,0);
                     if (paddingHeight>0&&mCurrentState!=STATE_RELEASE_TO_REFRESH){
                         /*
@@ -214,8 +207,6 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
         mListener=listener;
     }
 
-
-
     /*
      * 1、下拉刷新的回调接口
      * */
@@ -289,6 +280,7 @@ public class PullToRefreshListView extends ListView implements AbsListView.OnScr
             int lastVIsiblePosition=getLastVisiblePosition();
             if (lastVIsiblePosition==getCount()-1&&!isLoadMore){// 当前显示的是最后一个item并且没有正在加载更多
                 Log.d("aa","加载更多");
+                isLoadMore=true;
                 mFootView.setPadding(0,0,0,0);
                 setSelection(getCount() - 1);// 将listview显示在最后一个item上,
                 // 从而加载更多会直接展示出来, 无需手动滑动

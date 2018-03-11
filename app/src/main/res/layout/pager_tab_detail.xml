@@ -6,11 +6,11 @@
     
 
 
-    <ListView
+    <com.wjp.mypc.view.PullToRefreshListView
         android:id="@+id/lv_tabdetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent">
-    </ListView>
+    </com.wjp.mypc.view.PullToRefreshListView>
 
 </LinearLayout>

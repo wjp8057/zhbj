@@ -51,7 +51,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
     //轮播图片小圆圈
     private CirclePageIndicator mCircleIndicator;
     //新闻列表listview
-    private ListView mListView;
+    private PullToRefreshListView mListView;
     //新闻内容
     private ArrayList<NewTabBean.NewsData> mNews;
 
@@ -69,7 +69,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
     @Override
     public View initView() {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
-        mListView=(ListView) view.findViewById(R.id.lv_tabdetail);
+        mListView=(PullToRefreshListView) view.findViewById(R.id.lv_tabdetail);
         /*给listview添加一个头布局，让图片能向上滑*/
         View headview=View.inflate(mActivity,R.layout.list_item_header,null);
         vp_tabdetail=headview.findViewById(R.id.vp_tabdetail);
@@ -78,7 +78,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
         mListView.addHeaderView(headview);
 
         //回调
-      /*  mListView.setOnRefershListener(new PullToRefreshListView.OnRefreshListener() {
+       mListView.setOnRefershListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getDataServer();
@@ -91,7 +91,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
                     getMoreDataServer();
                 }else{
                     Toast.makeText(mActivity,"没有更多数据了",Toast.LENGTH_LONG).show();
-                    mListView.OnRefreshComplete(true);
+                    mListView.OnRefreshComplete(false);
                 }
             }
         });
@@ -193,7 +193,6 @@ public class TabDetailPager extends BaseMenuDetailPager {
             /*
              * 设置图片
              * */
-            Toast.makeText(mActivity,"缓存",Toast.LENGTH_LONG).show();
             ImageOptions imageOptions = new ImageOptions.Builder()
                     .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     //加载过程中显示的图片
@@ -236,12 +235,12 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 analysis(result,false);
 
                 //刷新结束，收起控件
-          //      mListView.OnRefreshComplete(true);
+                mListView.OnRefreshComplete(true);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-//                mListView.OnRefreshComplete(false);
+                mListView.OnRefreshComplete(false);
             }
 
             @Override
@@ -338,14 +337,12 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 analysis(result,true);
 
                 //刷新结束，收起控件
-//                mListView.OnRefreshComplete(true);
-            //    mListView.OnRefreshComplete(true);
+                mListView.OnRefreshComplete(true);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-//                mListView.OnRefreshComplete(false);
-           //     mListView.OnRefreshComplete(false);
+                mListView.OnRefreshComplete(false);
             }
 
             @Override
