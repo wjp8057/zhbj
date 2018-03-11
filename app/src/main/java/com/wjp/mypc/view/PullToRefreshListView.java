@@ -1,15 +1,17 @@
 package com.wjp.mypc.view;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,7 +25,7 @@ import java.util.Date;
  * on 2018-03-08 21:58
  * Describe
  */
-public class PullToRefreshListView extends ListView{
+public class PullToRefreshListView extends ListView implements AbsListView.OnScrollListener{
     /*
     * 下拉刷新
     * */
@@ -42,7 +44,9 @@ public class PullToRefreshListView extends ListView{
     private int mCurrentState = STATE_PULL_TO_REFRESH;
 
     private View mHeaderView;
+    private View mFootView;
     private int mHeaderViewHeight;
+    private int mFootViewHeight;
     private int startY=-1;
     private ImageView imgJt;
     private ProgressBar pbJdt;
@@ -53,17 +57,20 @@ public class PullToRefreshListView extends ListView{
 
     public PullToRefreshListView(Context context) {
         super(context);
-        initHeaderView();
+//        initHeaderView();
+//        initFootview();
     }
 
     public PullToRefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initHeaderView();
+//        initHeaderView();
+//        initFootview();
     }
 
     public PullToRefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initHeaderView();
+//        initHeaderView();
+//        initFootview();
     }
 
     /*
@@ -199,6 +206,7 @@ public class PullToRefreshListView extends ListView{
     * */
     private OnRefreshListener mListener;
 
+
     /**
      * 2. 暴露接口,设置监听
      */
@@ -206,25 +214,37 @@ public class PullToRefreshListView extends ListView{
         mListener=listener;
     }
 
+
+
     /*
      * 1、下拉刷新的回调接口
      * */
     public interface OnRefreshListener{
         public void onRefresh();
+
+        //下拉加载更多
+        public void onLoadMore();
     }
 
     /*
     * 刷新结束，收起控件
     * */
     public void OnRefreshComplete(boolean flag){
-        mHeaderView.setPadding(0,-mHeaderViewHeight,0,0);
-        mCurrentState=STATE_PULL_TO_REFRESH;
-        tvZt.setText("下拉刷新");
-        pbJdt.setVisibility(View.INVISIBLE);
-        imgJt.setVisibility(View.VISIBLE);
+        if(!isLoadMore) {
+            mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
 
-        if (flag){
-            setCurrentTime();
+            mCurrentState = STATE_PULL_TO_REFRESH;
+            tvZt.setText("下拉刷新");
+            pbJdt.setVisibility(View.INVISIBLE);
+            imgJt.setVisibility(View.VISIBLE);
+
+            if (flag) {// 只有刷新成功之后才更新时间
+                setCurrentTime();
+            }
+        }else {
+            //加载更多
+            mFootView.setPadding(0, -mFootViewHeight, 0, 0);//隐藏布局
+            isLoadMore = false;
         }
     }
 
@@ -234,6 +254,51 @@ public class PullToRefreshListView extends ListView{
         String time = format.format(new Date());
 
         tvTime.setText(time);
+    }
+
+    /*
+    * 加载更多的foot布局
+    * */
+    private void initFootview(){
+            mFootView=View.inflate(getContext(),R.layout.pull_to_refresh_foot,null);
+            this.addFooterView(mFootView);
+            mFootView.measure(0,0);
+            mFootViewHeight=mFootView.getMeasuredHeight();
+            mFootView.setPadding(0,-mFootViewHeight,0,0);
+            this.setOnScrollListener(this);
+    }
+
+
+
+    // 滑动过程回调
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem,
+                         int visibleItemCount, int totalItemCount) {
+
+    }
+
+    /*
+    * 标记是否正在加载更多
+    * */
+    private boolean isLoadMore;
+    // 滑动状态发生变化
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        //空闲状态
+        if (scrollState==SCROLL_STATE_IDLE){
+            int lastVIsiblePosition=getLastVisiblePosition();
+            if (lastVIsiblePosition==getCount()-1&&!isLoadMore){// 当前显示的是最后一个item并且没有正在加载更多
+                Log.d("aa","加载更多");
+                mFootView.setPadding(0,0,0,0);
+                setSelection(getCount() - 1);// 将listview显示在最后一个item上,
+                // 从而加载更多会直接展示出来, 无需手动滑动
+
+                //通知主界面加载下一页数据
+                if (mListener!=null){
+                    mListener.onLoadMore();
+                }
+            }
+        }
     }
 
 }

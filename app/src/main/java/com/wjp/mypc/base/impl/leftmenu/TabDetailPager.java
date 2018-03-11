@@ -1,19 +1,19 @@
 package com.wjp.mypc.base.impl.leftmenu;
 
 import android.app.Activity;
-import android.database.DataSetObserver;
-import android.graphics.Color;
+import java.util.*;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.wjp.mypc.R;
@@ -45,41 +45,56 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private String mUrl;
     private NewTabBean mNewstabdatas;
     //头条新闻
-    private ArrayList<NewTabBean.NewsTabtopnews> mTopnews;
+    private ArrayList<NewTabBean.TopNews> mTopnews;
     //标题
     private TextView tv_title;
     //轮播图片小圆圈
     private CirclePageIndicator mCircleIndicator;
     //新闻列表listview
-    private PullToRefreshListView mListView;
+    private ListView mListView;
     //新闻内容
-    private ArrayList<NewTabBean.NewsTabnews> mNews;
+    private ArrayList<NewTabBean.NewsData> mNews;
+
+    private myListViewAdapter myListViewAdapter;
+
+    //下一页数据链接
+    private String mMoreUrl;
     public TabDetailPager(Activity activity,NewsMenu.NewsTabData m) {
         super(activity);
         this.newsMenuData=m;
         //新闻的链接
-        mUrl=m.url;
+        mUrl=newsMenuData.url.toString();
     }
 
     @Override
     public View initView() {
         View view=View.inflate(mActivity,R.layout.pager_tab_detail,null);
-        mListView=(PullToRefreshListView) view.findViewById(R.id.lv_tabdetail);
+        mListView=(ListView) view.findViewById(R.id.lv_tabdetail);
         /*给listview添加一个头布局，让图片能向上滑*/
         View headview=View.inflate(mActivity,R.layout.list_item_header,null);
+        vp_tabdetail=headview.findViewById(R.id.vp_tabdetail);
+        tv_title=headview.findViewById(R.id.tb_title);
+        mCircleIndicator=headview.findViewById(R.id.indicator);
         mListView.addHeaderView(headview);
 
         //回调
-        mListView.setOnRefershListener(new PullToRefreshListView.OnRefreshListener() {
+      /*  mListView.setOnRefershListener(new PullToRefreshListView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getDataServer();
             }
-        });
 
-        vp_tabdetail=headview.findViewById(R.id.vp_tabdetail);
-        tv_title=headview.findViewById(R.id.tb_title);
-        mCircleIndicator=headview.findViewById(R.id.indicator);
+            @Override
+            public void onLoadMore() {
+                //判断是否有下一页数据
+                if (mMoreUrl!=null){
+                    getMoreDataServer();
+                }else{
+                    Toast.makeText(mActivity,"没有更多数据了",Toast.LENGTH_LONG).show();
+                    mListView.OnRefreshComplete(true);
+                }
+            }
+        });
 
         /*
         *此处空指针异常
@@ -97,16 +112,16 @@ public class TabDetailPager extends BaseMenuDetailPager {
 //          vp_tabdetail.setAdapter(new tabdetail());
           String cache=CacheUtils.getCache(mUrl,mActivity);
           if (!TextUtils.isEmpty(cache)){
-              analysis(cache);
+              analysis(cache,false);
           }
           //从服务器获取数据
           getDataServer();
-//        view.setText(newsMenuData.title);
-//        TextView view=new TextView(mActivity);
-//        view.setText("页签");
-//        view.setTextSize(25);
-//        view.setTextColor(Color.RED);
-//        view.setGravity(Gravity.CENTER);
+        /*view.setText(newsMenuData.title);
+        TextView view=new TextView(mActivity);
+        view.setText("页签");
+        view.setTextSize(25);
+        view.setTextColor(Color.RED);
+        view.setGravity(Gravity.CENTER);*/
     }
 
     class tabdetail extends PagerAdapter{
@@ -130,7 +145,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
             /*参数：
             * 图片要显示在哪个ImageView中；图片的链接；图片的参数
             * */
-            x.image().bind(view, mTopnews.get(position).getTopimage(),imageOptions);
+            x.image().bind(view, mTopnews.get(position).topimage,imageOptions);
             container.addView(view);
             return view;
         }
@@ -144,93 +159,6 @@ public class TabDetailPager extends BaseMenuDetailPager {
         }
     }
 
-    //请求网络数据
-    protected void getDataServer(){
-        RequestParams params=new RequestParams(GlobalConstants.SERVER_URL+mUrl);
-        params.setConnectTimeout(6000);
-        params.setReadTimeout(6000);
-//        System.out.println("参数："+params);
-        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                /*Gson gson=new Gson();
-                NewTabBean newTabBean=gson.fromJson(result, NewTabBean.class);
-                System.out.println("结果:"+newTabBean);*/
-                /*
-                * 保存结果
-                * */
-                CacheUtils.setCache(mUrl,result,mActivity);
-                analysis(result);
-
-                //刷新结束，收起控件
-                mListView.OnRefreshComplete(true);
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                mListView.OnRefreshComplete(false);
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }
-
-    //解析网络请求的数据
-    protected void analysis(String res){
-        Gson gson=new Gson();
-        mNewstabdatas=gson.fromJson(res,NewTabBean.class);
-        mTopnews=mNewstabdatas.data.getTopnews();
-        /*
-        * 新闻内容
-        * */
-        mNews=mNewstabdatas.data.getNews();
-        if(mTopnews!=null){
-            /*
-            图片的adapter
-            * */
-            vp_tabdetail.setAdapter(new tabdetail());
-            tv_title.setText(mTopnews.get(0).getTitle());
-            /*
-            * 设置图片轮播时的小圆圈
-            * */
-            mCircleIndicator.setViewPager(vp_tabdetail);
-            mCircleIndicator.setSnap(true);
-            /*
-            *默认让第一个选择，解决页面销毁后重新初始化，小圆点跟图片对不上号的问题
-            * */
-            mCircleIndicator.onPageSelected(0);
-            vp_tabdetail.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    tv_title.setText(mTopnews.get(position).getTitle());
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-            /*
-            * listview的adapter
-            * */
-            mListView.setAdapter(new myListViewAdapter());
-        }
-
-    }
-
     class myListViewAdapter extends BaseAdapter{
         @Override
         public int getCount() {
@@ -238,7 +166,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
         }
 
         @Override
-        public NewTabBean.NewsTabnews getItem(int position) {
+        public NewTabBean.NewsData getItem(int position) {
             return mNews.get(position);
         }
 
@@ -259,35 +187,176 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 convertView.setTag(holder);
             }else {
                 holder=(ViewHolder)convertView.getTag();
-                /*
-                * 设置图片
-                * */
-                ImageOptions imageOptions = new ImageOptions.Builder()
-                        .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                        //加载过程中显示的图片
-                        .setLoadingDrawableId(R.drawable.pic_item_list_default)
-                        //加载失败后显示的图片
-                        .setFailureDrawableId(R.drawable.pic_item_list_default)
-                        .build();
-                /*参数：
-                 * 图片要显示在哪个ImageView中；图片的链接；图片的参数
-                 * */
-                x.image().bind(holder.ivIcon, mNews.get(position).getListimage(),imageOptions);
-                /*
-                * 设置标题
-                * */
-                holder.tvTtile.setText(mNews.get(position).getTitle());
-                /*
-                * 设置时间
-                * */
-               holder.tvData.setText(mNews.get(position).getPubdate());
+
             }
+            NewTabBean.NewsData news=getItem(position);
+            /*
+             * 设置图片
+             * */
+            Toast.makeText(mActivity,"缓存",Toast.LENGTH_LONG).show();
+            ImageOptions imageOptions = new ImageOptions.Builder()
+                    .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    //加载过程中显示的图片
+                    .setLoadingDrawableId(R.drawable.pic_item_list_default)
+                    //加载失败后显示的图片
+                    .setFailureDrawableId(R.drawable.pic_item_list_default)
+                    .build();
+            /*参数：
+             * 图片要显示在哪个ImageView中；图片的链接；图片的参数
+             * */
+            x.image().bind(holder.ivIcon, news.listimage,imageOptions);
+            /*
+             * 设置标题
+             * */
+            holder.tvTtile.setText(news.title);
+            /*
+             * 设置时间
+             * */
+            holder.tvData.setText(news.pubdate);
             return convertView;
         }
     }
 
+    //请求网络数据
+    protected void getDataServer(){
+        RequestParams params=new RequestParams(GlobalConstants.SERVER_URL+mUrl);
+        params.setConnectTimeout(6000);
+        params.setReadTimeout(6000);
+//        System.out.println("参数："+params);
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                /*Gson gson=new Gson();
+                NewTabBean newTabBean=gson.fromJson(result, NewTabBean.class);
+                System.out.println("结果:"+newTabBean);*/
+                /*
+                * 保存结果
+                * */
+                CacheUtils.setCache(mUrl,result,mActivity);
+                analysis(result,false);
+
+                //刷新结束，收起控件
+          //      mListView.OnRefreshComplete(true);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+//                mListView.OnRefreshComplete(false);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    //解析网络请求的数据
+    protected void analysis(String res,boolean isMore){
+        Gson gson=new Gson();
+        mNewstabdatas=gson.fromJson(res,NewTabBean.class);
+        mNews=mNewstabdatas.data.news;
+        String moreUrl2=mNewstabdatas.data.more;
+        if (!TextUtils.isEmpty(moreUrl2)){
+            mMoreUrl=GlobalConstants.SERVER_URL+moreUrl2;
+        }else {
+            mMoreUrl=null;
+        }
+
+        if (!isMore){
+            /*
+             * 新闻内容
+             * */
+            mTopnews=mNewstabdatas.data.topnews;
+            if(mTopnews!=null){
+            /*
+            图片的adapter
+            * */
+                vp_tabdetail.setAdapter(new tabdetail());
+                tv_title.setText(mTopnews.get(0).title);
+                /*
+                 * 设置图片轮播时的小圆圈
+                 * */
+                mCircleIndicator.setViewPager(vp_tabdetail);
+                mCircleIndicator.setSnap(true);
+                /*
+                 *默认让第一个选择，解决页面销毁后重新初始化，小圆点跟图片对不上号的问题
+                 * */
+                mCircleIndicator.onPageSelected(0);
+                vp_tabdetail.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        tv_title.setText(mTopnews.get(position).title);
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+                /*
+                 * listview的adapter
+                 * */
+            }
+            myListViewAdapter=new myListViewAdapter();
+            mListView.setAdapter(myListViewAdapter);
+        }else {
+            //加载更多
+            List<NewTabBean.NewsData> moreNews=mNewstabdatas.data.news;
+            // 将数据追加在原来的集合中
+            mNews.addAll(moreNews);
+            // 刷新listview
+            myListViewAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+
     static class ViewHolder{
         public ImageView ivIcon;
         public TextView tvTtile,tvData;
+    }
+
+    //加载更多数据
+    protected void getMoreDataServer(){
+        RequestParams params=new RequestParams(mMoreUrl);
+        params.setConnectTimeout(6000);
+        params.setReadTimeout(6000);
+        x.http().request(HttpMethod.GET, params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                analysis(result,true);
+
+                //刷新结束，收起控件
+//                mListView.OnRefreshComplete(true);
+            //    mListView.OnRefreshComplete(true);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+//                mListView.OnRefreshComplete(false);
+           //     mListView.OnRefreshComplete(false);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 }
