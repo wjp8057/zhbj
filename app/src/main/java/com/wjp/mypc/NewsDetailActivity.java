@@ -1,0 +1,162 @@
+package com.wjp.mypc;
+
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
+public class NewsDetailActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private ImageButton imgbtn_back,imgbtn_menu,imgbtn_textsz,imgbtn_share;
+    private LinearLayout llcontrol;
+    private WebView wv_nsdt;
+    private ProgressBar pb_loading;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_news_detail);
+        imgbtn_back=(ImageButton) findViewById(R.id.imgbtn_back);
+        imgbtn_menu=(ImageButton) findViewById(R.id.imgbtn_menu);
+        imgbtn_textsz=(ImageButton) findViewById(R.id.imgbtn_textsz);
+        imgbtn_share=(ImageButton) findViewById(R.id.imgbtn_share);
+        llcontrol=(LinearLayout) findViewById(R.id.nsdt_ll_control);
+        wv_nsdt=(WebView) findViewById(R.id.wv_nsdt);
+        pb_loading=(ProgressBar)findViewById(R.id.pb_loading);
+        imgbtn_back.setOnClickListener(this);
+        imgbtn_textsz.setOnClickListener(this);
+        imgbtn_menu.setOnClickListener(this);
+        /*
+        * 隐藏菜单按钮,打开返回按钮
+        * */
+        imgbtn_menu.setVisibility(View.GONE);
+        imgbtn_back.setVisibility(View.VISIBLE);
+        /*
+        * 打开字体按钮和分享按钮
+        * */
+        llcontrol.setVisibility(View.VISIBLE);
+
+        wv_nsdt.loadUrl(getIntent().getStringExtra("dturl"));
+        WebSettings settings=wv_nsdt.getSettings();
+        settings.setBuiltInZoomControls(true);//设置是否有缩放按钮
+        settings.setJavaScriptEnabled(true);//支持js
+        settings.setUseWideViewPort(true);//自适应屏幕 任意比例缩放
+        wv_nsdt.setWebViewClient(new WebViewClient(){
+            // 所有链接跳转会走此方法
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return  true;
+            }
+
+            //开始加在网页
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.d("start","开始加载网页了");
+                pb_loading.setVisibility(View.VISIBLE);
+                super.onPageStarted(view, url, favicon);
+            }
+
+            //网页加载结束
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.d("end","网页加载结束");
+                pb_loading.setVisibility(View.INVISIBLE);
+                super.onPageFinished(view, url);
+            }
+        });
+
+        wv_nsdt.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                // 进度发生变化
+                System.out.println("进度:" + newProgress);
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                // 网页标题
+                System.out.println("网页标题:" + title);
+            }
+        });
+    }
+
+    /*
+    * 图片按钮点击事件
+    * */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.imgbtn_back:
+                finish();
+                break;
+            case R.id.imgbtn_textsz:
+                TextSizeSelect();
+                break;
+            case R.id.imgbtn_share:
+                break;
+            default:break;
+        }
+    }
+    private int mCurrenWhich=2;
+    private int mTempWhich;
+    /*
+    * 网页字体大小选择
+    * */
+    private void TextSizeSelect(){
+        String[] ts=new String[]{"超大号字体", "大号字体", "正常字体", "小号字体",
+                "超小号字体" };
+        AlertDialog.Builder builder=new AlertDialog.Builder(NewsDetailActivity.this);
+        builder.setTitle("字体设置");
+        builder.setSingleChoiceItems(ts, mCurrenWhich, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mTempWhich=which;
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("which",String.valueOf(which));
+                WebSettings webSettings=wv_nsdt.getSettings();
+                switch (mTempWhich){
+                    case 0:
+                        webSettings.setTextSize(WebSettings.TextSize.LARGEST);
+                        break;
+                    case 1:
+                        webSettings.setTextSize(WebSettings.TextSize.LARGER);
+                        break;
+                    case 2:
+                        webSettings.setTextSize(WebSettings.TextSize.NORMAL);
+                        break;
+                    case 3:
+                        webSettings.setTextSize(WebSettings.TextSize.SMALLER);
+                        break;
+                    case 4:
+                        webSettings.setTextSize(WebSettings.TextSize.SMALLEST);
+                        break;
+                    default:
+                        break;
+                }
+                mCurrenWhich=mTempWhich;
+            }
+        });
+        builder.setNegativeButton("取消",null);
+        builder.create();
+        builder.show();
+    }
+}

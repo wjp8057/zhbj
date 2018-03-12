@@ -2,12 +2,16 @@ package com.wjp.mypc.base.impl.leftmenu;
 
 import android.app.Activity;
 import java.util.*;
+
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,12 +20,14 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.viewpagerindicator.CirclePageIndicator;
+import com.wjp.mypc.NewsDetailActivity;
 import com.wjp.mypc.R;
 import com.wjp.mypc.base.BaseMenuDetailPager;
 import com.wjp.mypc.domain.NewTabBean;
 import com.wjp.mypc.domain.NewsMenu;
 import com.wjp.mypc.global.GlobalConstants;
 import com.wjp.mypc.utils.CacheUtils;
+import com.wjp.mypc.utils.PrefUtils;
 import com.wjp.mypc.view.PullToRefreshListView;
 import com.wjp.mypc.view.TabNewsViewPager;
 import org.xutils.common.Callback;
@@ -95,6 +101,30 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 }
             }
         });
+
+       /*
+       * 点击标记为已读
+       * */
+       mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int posi=position-mListView.getHeaderViewsCount();
+                String read_ids= PrefUtils.getString(mActivity,"read_ids","");
+                if (!read_ids.contains(String.valueOf(mNews.get(posi).id))){
+                    read_ids=read_ids+mNews.get(posi).id+",";
+                    PrefUtils.setString(mActivity,"read_ids",read_ids);
+                }
+                TextView tvTitle=(TextView) view.findViewById(R.id.tv_title);
+                tvTitle.setTextColor(Color.GRAY);
+
+                /*
+                * 跳转新闻详情页
+                * */
+               Intent intent=new Intent(mActivity, NewsDetailActivity.class);
+               intent.putExtra("dturl",mNews.get(posi).url);
+               mActivity.startActivity(intent);
+           }
+       });
 
         /*
         *此处空指针异常
@@ -208,6 +238,12 @@ public class TabDetailPager extends BaseMenuDetailPager {
              * 设置标题
              * */
             holder.tvTtile.setText(news.title);
+            String readids=PrefUtils.getString(mActivity,"read_ids","");
+            if(readids.contains(String.valueOf(mNews.get(position).id))){
+                holder.tvTtile.setTextColor(Color.GRAY);
+            }else {
+                holder.tvTtile.setTextColor(Color.BLACK);
+            }
             /*
              * 设置时间
              * */
