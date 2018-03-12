@@ -2,6 +2,8 @@ package com.wjp.mypc;
 
 import android.app.Application;
 
+import com.mob.MobSDK;
+
 import org.xutils.x;
 
 import javax.net.ssl.HostnameVerifier;
@@ -12,6 +14,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MobSDK.init(this);
         x.Ext.init(this);
         x.Ext.setDebug(BuildConfig.DEBUG);//// true/false是否输出debug日志, 开启debug会影响性能.
         // 全局默认信任所有https域名 或 仅添加信任的https域名
