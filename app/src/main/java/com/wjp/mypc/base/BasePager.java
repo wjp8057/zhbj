@@ -21,6 +21,11 @@ public class BasePager {
     public FrameLayout flContent;
     public View rootView;
 
+    /*
+    * 组图切换的imagebutton
+    * */
+    public ImageButton imgphoto_btn;
+
     public BasePager(Activity activity){
         this.mActivity=activity;
         rootView=initView();
@@ -31,6 +36,7 @@ public class BasePager {
         tvTitle=view.findViewById(R.id.tv_title);
         imgBtnMenu=view.findViewById(R.id.imgbtn_menu);
         flContent=view.findViewById(R.id.fl_content);
+        imgphoto_btn=view.findViewById(R.id.imgbtn_gvphoto);
         //给侧边栏图标加一个点击事件，点击
         imgBtnMenu.setOnClickListener(new View.OnClickListener() {
             @Override

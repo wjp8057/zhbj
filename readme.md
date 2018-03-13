@@ -41,3 +41,6 @@
 ![](https://i.imgur.com/oKxHW4O.png)
 ![](https://i.imgur.com/BCaJNmz.png)
 
+9、组图开发：在PhotosMenuDetailPager类中加载布局，一个帧布局里包含ListView和GroupView，
+共用一个adapter，当显示ListView的时候隐藏GroupView,显示GroupView的有隐藏ListView
+
