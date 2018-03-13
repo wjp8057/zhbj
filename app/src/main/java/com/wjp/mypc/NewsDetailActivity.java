@@ -25,6 +25,7 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
     private LinearLayout llcontrol;
     private WebView wv_nsdt;
     private ProgressBar pb_loading;
+    private String mUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,20 +50,13 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
         * 打开字体按钮和分享按钮
         * */
         llcontrol.setVisibility(View.VISIBLE);
-
-        wv_nsdt.loadUrl(getIntent().getStringExtra("dturl"));
+        mUrl=getIntent().getStringExtra("dturl");
+        wv_nsdt.loadUrl(mUrl);
         WebSettings settings=wv_nsdt.getSettings();
         settings.setBuiltInZoomControls(true);//设置是否有缩放按钮
         settings.setJavaScriptEnabled(true);//支持js
         settings.setUseWideViewPort(true);//自适应屏幕 任意比例缩放
         wv_nsdt.setWebViewClient(new WebViewClient(){
-            // 所有链接跳转会走此方法
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return  true;
-            }
-
             //开始加在网页
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -71,28 +65,18 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
                 super.onPageStarted(view, url, favicon);
             }
 
-            //网页加载结束
             @Override
             public void onPageFinished(WebView view, String url) {
-                Log.d("end","网页加载结束");
+                Log.d("end","结束加载网页了");
                 pb_loading.setVisibility(View.INVISIBLE);
                 super.onPageFinished(view, url);
             }
-        });
 
-        wv_nsdt.setWebChromeClient(new WebChromeClient() {
+            // 所有链接跳转会走此方法
             @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                // 进度发生变化
-                System.out.println("进度:" + newProgress);
-            }
-
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                // 网页标题
-                System.out.println("网页标题:" + title);
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return  true;
             }
         });
     }
@@ -109,32 +93,14 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
             case R.id.imgbtn_textsz:
                 TextSizeSelect();
                 break;
-            case R.id.imgbtn_share:{
-                Log.d("aaa","你好");
-                OnekeyShare oks = new OnekeyShare();
-                //关闭sso授权
-                oks.disableSSOWhenAuthorize();
-
-                // title标题，微信、QQ和QQ空间等平台使用
-                oks.setTitle(getString(R.string.app_name));
-                // titleUrl QQ和QQ空间跳转链接
-                oks.setTitleUrl("http://sharesdk.cn");
-                // text是分享文本，所有平台都需要这个字段
-                oks.setText("我是分享文本");
-                // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-//                oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
-                // url在微信、微博，Facebook等平台中使用
-                oks.setUrl("http://sharesdk.cn");
-                // comment是我对这条分享的评论，仅在人人网使用
-                oks.setComment("我是测试评论文本");
-                // 启动分享GUI
-                oks.show(this);}
+            case R.id.imgbtn_share:
+                share_def();
                 break;
             default:break;
         }
     }
     private int mCurrenWhich=2;
-    private int mTempWhich;
+    private int mTempWhich=2;
     /*
     * 网页字体大小选择
     * */
@@ -179,5 +145,30 @@ public class NewsDetailActivity extends AppCompatActivity implements View.OnClic
         builder.setNegativeButton("取消",null);
         builder.create();
         builder.show();
+    }
+
+    /*
+    * 分享到社交平台
+    * */
+    private void share_def(){
+        Log.d("aaa","你好");
+        OnekeyShare oks = new OnekeyShare();
+        //关闭sso授权
+        oks.disableSSOWhenAuthorize();
+
+        // title标题，微信、QQ和QQ空间等平台使用
+        oks.setTitle(getString(R.string.app_name));
+        // titleUrl QQ和QQ空间跳转链接
+        oks.setTitleUrl(mUrl);
+        // text是分享文本，所有平台都需要这个字段
+        oks.setText("我是分享文本");
+        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+//                oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
+        // url在微信、微博，Facebook等平台中使用
+        oks.setUrl(mUrl);
+        // comment是我对这条分享的评论，仅在人人网使用
+        oks.setComment("我是测试评论文本");
+        // 启动分享GUI
+        oks.show(this);
     }
 }

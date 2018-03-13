@@ -33,3 +33,11 @@
 
 	*对话框参数：第一个参数是对话框内容，第二个参数是设置默认选择第几个，第三个是监听事件。
 ![](https://i.imgur.com/8E49M8o.png)
+
+8、图片轮播：使用ViewPager
+![](https://i.imgur.com/pO2Usqt.png)
+
+设置对图片动作的监听：
+![](https://i.imgur.com/oKxHW4O.png)
+![](https://i.imgur.com/BCaJNmz.png)
+

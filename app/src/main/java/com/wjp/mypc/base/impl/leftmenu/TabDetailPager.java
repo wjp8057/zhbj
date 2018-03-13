@@ -5,10 +5,13 @@ import java.util.*;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,6 +65,8 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private ArrayList<NewTabBean.NewsData> mNews;
 
     private myListViewAdapter myListViewAdapter;
+
+    private Handler mHandler;
 
     //下一页数据链接
     private String mMoreUrl;
@@ -345,6 +350,67 @@ public class TabDetailPager extends BaseMenuDetailPager {
             }
             myListViewAdapter=new myListViewAdapter();
             mListView.setAdapter(myListViewAdapter);
+
+            /*
+            * 图片轮播
+            * */
+            if (mHandler == null) {
+                mHandler = new Handler() {
+                    @Override
+                    public void handleMessage(android.os.Message msg) {
+                        int currentItem = vp_tabdetail.getCurrentItem();
+                        currentItem++;
+
+                        if (currentItem > mTopnews.size() - 1) {
+                            currentItem = 0;// 如果已经到了最后一个页面,跳到第一页
+                        }
+
+                        vp_tabdetail.setCurrentItem(currentItem);
+
+                        mHandler.sendEmptyMessageDelayed(0, 3000);// 继续发送延时3秒的消息,形成内循环
+                    };
+                };
+
+                // 保证启动自动轮播逻辑只执行一次
+                mHandler.sendEmptyMessageDelayed(0, 3000);// 发送延时3秒的消息
+
+                vp_tabdetail.setOnTouchListener(new View.OnTouchListener() {
+
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                System.out.println("ACTION_DOWN");
+                                // 停止广告自动轮播
+                                // 删除handler的所有消息
+                                mHandler.removeCallbacksAndMessages(null);
+                                // mHandler.post(new Runnable() {
+                                //
+                                // @Override
+                                // public void run() {
+                                // //在主线程运行
+                                // }
+                                // });
+                                break;
+                            case MotionEvent.ACTION_CANCEL:// 取消事件,
+                                // 当按下viewpager后,直接滑动listview,导致抬起事件无法响应,但会走此事件
+                                System.out.println("ACTION_CANCEL");
+                                // 启动广告
+                                mHandler.sendEmptyMessageDelayed(0, 3000);
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                System.out.println("ACTION_UP");
+                                // 启动广告
+                                mHandler.sendEmptyMessageDelayed(0, 3000);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+            }
         }else {
             //加载更多
             List<NewTabBean.NewsData> moreNews=mNewstabdatas.data.news;
